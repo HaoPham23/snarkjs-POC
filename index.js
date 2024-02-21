@@ -12,8 +12,8 @@ async function dishonest_prover(n) {
     const q = 1;
     const result = await attack.plonk.fullFakeProve({p, q}, "build/circuit_js/circuit.wasm", "build/circuit_final.zkey", [n]);
     const fake_proof = result.proof;
-    const fake_publicSignals = result.publicSignals;
-    return {fake_proof, fake_publicSignals};
+    const publicSignals = result.publicSignals;
+    return {fake_proof, publicSignals};
 }
 
 async function verifier(proof, publicSignals) {
@@ -34,7 +34,7 @@ async function verifier(proof, publicSignals) {
     console.log("proof", proof);
     await verifier(proof, publicSignals);
 
-    const {fake_proof, fake_publicSignals} = await dishonest_prover(n);
+    const {fake_proof, _} = await dishonest_prover(n);
     console.log("fake_proof", fake_proof);
-    await verifier(fake_proof, fake_publicSignals);
+    await verifier(fake_proof, [n]);
 })();
